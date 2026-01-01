@@ -61,7 +61,7 @@ def prepare_dataset(file: str | UploadedFile, test: bool = False) -> pd.DataFram
     df[ficols] = df[ficols].apply(pd.to_numeric, downcast="integer")
 
     icols = df.select_dtypes("integer").columns
-    cat_cols = ["fuel", "seller_type", "transmission", "owner"]
+    cat_cols = ["fuel", "seller_type", "transmission", "owner", "seats"]
 
     df[fcols] = df[fcols].apply(pd.to_numeric, downcast="float")
     df[icols] = df[icols].apply(pd.to_numeric, downcast="integer")
@@ -156,12 +156,12 @@ def model_visualization() -> None:
     # Про st.spinner спросил у LLM
     # noinspection PyTypeChecker
     with st.spinner("Обработка данных..."):
-        df = prepare_dataset(uploaded_file)
+        df = prepare_dataset(uploaded_file, test=True)
 
     x_test = df.drop(columns=["selling_price"])
     y_test = df["selling_price"]
     y_pred = PIPELINE.predict(x_test)
-    st.metric("r2_score", r2_score(y_test, y_pred))
+    st.metric("r2_score", round(r2_score(y_test, y_pred), 4))
 
 
 def prediction() -> None:
